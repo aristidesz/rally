@@ -50,8 +50,16 @@ def check_custom_env(my_custom_env):
         print(f"Environment check failed: {e}")
 
 
-def dca_approach(env: gym.Env, df: pd.DataFrame) -> np.float32:
-
+def dca_approach(
+    df: pd.DataFrame, initial_balance: float = 10000
+) -> np.float32:
+    # Create the environment using gym.make
+    env = gym.make(
+        "SP500TradingEnv-v0",
+        df=df,
+        balance=initial_balance,
+        render_mode="human",
+    )
     # Test the environment
     _, _ = env.reset()
     env.render()
@@ -84,5 +92,5 @@ if __name__ == "__main__":
     env.render()
 
     # Perform a baseline investment strategy based on dca
-    net_worth_dca = dca_approach(env, df)
+    net_worth_dca = dca_approach(df)
     print(f"Net worth after Dollar " f"Cost Average (DCA): {net_worth_dca}")

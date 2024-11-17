@@ -1,22 +1,42 @@
-import gymnasium as gym
 import numpy as np
+import pandas as pd
 import pytest
 
-from pipeline.main import dca_approach, get_snp_data, load_config
+from pipeline.main import dca_approach, load_config
+
+
+def test_snp_data():
+    config = load_config()
+    assert config["data_path"] == "./data/sp500.csv"
 
 
 @pytest.fixture
-def snp_data():
-    config = load_config()
-    df = get_snp_data(config["data_path"])
+def sample_snp_df():
+    data = {
+        "Date": [
+            "2012-02-06",
+            "2012-02-07",
+            "2012-02-08",
+            "2012-02-09",
+            "2012-02-10",
+        ],
+        "Close": [1344.33, 1347.05, 1349.96, 1351.95, 1342.64],
+        "Open": [1344.32, 1344.33, 1347.04, 1349.97, 1351.21],
+        "High": [1344.36, 1349.24, 1351.00, 1354.32, 1351.21],
+        "Low": [1337.52, 1335.92, 1341.95, 1344.63, 1337.35],
+    }
+
+    # Create the DataFrame
+    df = pd.DataFrame(data)
+
+    # Convert the Date column to datetime
+    df["Date"] = pd.to_datetime(df["Date"])
     return df
 
 
-def test_dca_approach(snp_data):
-    df = snp_data.copy()
-
+def test_dca_approach(sample_snp_df):
     # Starting conditions
-    initial_balance = 10000
+    initial_balance = 50
     net_worth_expected = initial_balance
     investment_per_day = 10
     shares_owned = 0  # Start with no shares owned
@@ -24,7 +44,7 @@ def test_dca_approach(snp_data):
     days_invested = 0
 
     # Loop through each day in the data
-    for index, row in df.iterrows():
+    for index, row in sample_snp_df.iterrows():
         if initial_balance < investment_per_day:
             # If not enought funds buy 0 shares
             shares_bought_today = 0
@@ -48,10 +68,8 @@ def test_dca_approach(snp_data):
 
     net_worth_expected = round(net_worth_expected, 2)
 
-    # Create the environment using gym.make
-    env = gym.make("SP500TradingEnv-v0", df=df, render_mode="human")
+    net_worth = dca_approach(sample_snp_df, initial_balance=50)
 
-    net_worth = dca_approach(env, df)
     assert np.isclose(
         net_worth_expected, net_worth
     ), f"Expected {net_worth_expected}, but got {net_worth}"

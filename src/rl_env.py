@@ -12,7 +12,7 @@ register(
 class SP500TradingEnv(gym.Env):
     metadata = {"render_modes": ["human"]}
 
-    def __init__(self, df, render_mode=None):
+    def __init__(self, df, balance=10000, render_mode=None):
         self.df = df
         total_steps = self.df.shape[0]
         self.render_mode = render_mode
@@ -27,10 +27,10 @@ class SP500TradingEnv(gym.Env):
         self.action_space = spaces.Discrete(2)
 
         # Initialize variables
-        self.balance = 10000  # Starting cash balance
+        self.balance = balance  # Starting cash balance
         self.investment = 0  # Amount invested in the index
         # Total net worth (balance + value of investments)
-        self.net_worth = 10000
+        self.net_worth = self.balance
         self.current_step = 0  # Current step
         self.max_steps = len(self.df)  # Maximum steps in the environment
 
@@ -79,9 +79,9 @@ class SP500TradingEnv(gym.Env):
         super().reset(seed=seed)
 
         # Reset environment state
-        self.balance = 10000
+        self.balance = self.balance
         self.investment = 0
-        self.net_worth = 10000
+        self.net_worth = self.balance
         self.current_step = 0
 
         return self._next_observation(), {}
