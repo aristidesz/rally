@@ -40,7 +40,6 @@ class SP500TradingEnv(gym.Env):
 
         # Get the current price of the index
         current_price = self.df.loc[self.current_step, "Close"]
-
         # Process the action
         if action == 1 and self.balance >= 10:
             # Invest £10 into the index
