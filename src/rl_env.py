@@ -83,7 +83,6 @@ class SP500TradingEnv(gym.Env):
         self.investment = 0
         self.net_worth = self.balance
         self.current_step = 0
-
         return self._next_observation(), {}
 
     def render(self, mode="human", close=False):
