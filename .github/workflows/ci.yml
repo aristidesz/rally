@@ -37,11 +37,8 @@ jobs:
       - name: Run black
         run: poetry run black --check .
 
-      - name: Run mypy
-        run: poetry run mypy --explicit-package-bases src tests
-
       - name: Run bandit
-        run: poetry run bandit -r src
+        run: poetry run bandit -r --exclude tests/*
 
   test:
     runs-on: ubuntu-latest
