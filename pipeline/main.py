@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import yaml
 from gymnasium.utils.env_checker import check_env
+from stable_baselines3 import PPO
 
 from src import rl_env
 
@@ -72,6 +73,36 @@ def dca_approach(
     return round(net_worth_dca, 2)
 
 
+def rl_approach(df: pd.DataFrame, initial_balance: float = 10000):
+    env = gym.make(
+        "SP500TradingEnv-v0",
+        df=df,
+        balance=initial_balance,
+        render_mode="human",
+    )
+    # Test the environment
+    _, _ = env.reset()
+    env.render()
+    # Instantiate RL model
+    model = PPO("MlpPolicy", env, verbose=1)
+
+    print("Training the model...")
+    model.learn(total_timesteps=10000)
+
+    obs, _ = env.reset()
+    for _ in range(df.shape[0]):
+        action, _states = model.predict(obs, deterministic=True)
+        obs, reward, done, _, _ = env.step(action)
+
+        if done:
+            break
+
+    # Access the original SP500TradingEnv (unwrapped version)
+    original_env = env.unwrapped
+    net_worth_dca = getattr(original_env, "net_worth", None)
+    return round(net_worth_dca, 2)
+
+
 if __name__ == "__main__":
 
     config = load_config()
@@ -94,3 +125,7 @@ if __name__ == "__main__":
     # Perform a baseline investment strategy based on dca
     net_worth_dca = dca_approach(df)
     print(f"Net worth after Dollar " f"Cost Average (DCA): {net_worth_dca}")
+
+    # Perform a RL investment strategy based PPO
+    net_worth_rl = rl_approach(df)
+    print(f"Net worth after RL strategy: {net_worth_rl}")

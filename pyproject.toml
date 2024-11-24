@@ -8,7 +8,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
-numpy = "^2.1.2"
+numpy = "<2"
 isort = "^5.10.1"
 pre-commit = "^4.0.0"
 flake8 = "7.1.1"
@@ -16,6 +16,7 @@ black = "^24.8.0"
 pytest = "^8.3.3"
 gymnasium = "^1.0.0"
 pandas = "^2.2.3"
+ipykernel = "^6.29.5"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.12.0"

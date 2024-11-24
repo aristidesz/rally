@@ -27,10 +27,11 @@ class SP500TradingEnv(gym.Env):
         self.action_space = spaces.Discrete(2)
 
         # Initialize variables
-        self.balance = balance  # Starting cash balance
+        self.initial_balance = balance
+        self.balance = self.initial_balance  # Starting cash balance
         self.investment = 0  # Amount invested in the index
         # Total net worth (balance + value of investments)
-        self.net_worth = self.balance
+        self.net_worth = self.initial_balance
         self.current_step = 0  # Current step
         self.max_steps = len(self.df)  # Maximum steps in the environment
 
@@ -78,9 +79,9 @@ class SP500TradingEnv(gym.Env):
         super().reset(seed=seed)
 
         # Reset environment state
-        self.balance = self.balance
+        self.balance = self.initial_balance
         self.investment = 0
-        self.net_worth = self.balance
+        self.net_worth = self.initial_balance
         self.current_step = 0
         return self._next_observation(), {}
 
