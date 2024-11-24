@@ -1,5 +1,6 @@
 # from src.rl_env import SP500TradingEnv
 import logging
+
 import gymnasium as gym
 import numpy as np
 import pandas as pd
@@ -8,7 +9,6 @@ from gymnasium.utils.env_checker import check_env
 from stable_baselines3 import PPO
 
 from src import rl_env
-
 
 # Basic configuration
 logging.basicConfig(
@@ -109,6 +109,7 @@ def rl_approach(df: pd.DataFrame, initial_balance: float = 10000):
     net_worth_rl = getattr(original_env, "net_worth", None)
     return round(net_worth_rl, 2)
 
+
 if __name__ == "__main__":
 
     config = load_config()
@@ -125,7 +126,6 @@ if __name__ == "__main__":
 
     check_custom_env(env.unwrapped)
 
-
     # Test the environment
     obs, info = env.reset()
     env.render()
@@ -140,4 +140,3 @@ if __name__ == "__main__":
     # Perform a RL investment strategy based PPO
     net_worth_rl = rl_approach(df)
     logging.info(f"Net worth after RL strategy: {net_worth_rl}")
-
