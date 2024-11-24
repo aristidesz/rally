@@ -19,7 +19,7 @@ class SP500TradingEnv(gym.Env):
         # Define observation space
         self.observation_space = spaces.Box(
             low=np.array([0, 0, 0, 0], dtype=np.float32),
-            high=np.array([10000, 10000, total_steps, 10], dtype=np.float32),
+            high=np.array([total_steps, 100000, 10000, 100], dtype=np.float32),
             dtype=np.float32,
         )
 
@@ -97,6 +97,6 @@ class SP500TradingEnv(gym.Env):
     def _next_observation(self):
         # Return observation of current environment state
         return np.array(
-            [self.balance, self.net_worth, self.investment, self.current_step],
+            [self.current_step, self.net_worth, self.balance, self.investment],
             dtype=np.float32,
         )
