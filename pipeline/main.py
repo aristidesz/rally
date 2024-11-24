@@ -1,6 +1,5 @@
 # from src.rl_env import SP500TradingEnv
 import logging
-
 import gymnasium as gym
 import numpy as np
 import pandas as pd
@@ -9,6 +8,7 @@ from gymnasium.utils.env_checker import check_env
 from stable_baselines3 import PPO
 
 from src import rl_env
+
 
 # Basic configuration
 logging.basicConfig(
@@ -96,6 +96,7 @@ def rl_approach(df: pd.DataFrame, initial_balance: float = 10000):
     model = PPO("MlpPolicy", env, verbose=1)
 
     logging.info("Training the model...")
+
     model.learn(total_timesteps=10000)
 
     obs, _ = env.reset()
@@ -107,7 +108,6 @@ def rl_approach(df: pd.DataFrame, initial_balance: float = 10000):
     original_env = env.unwrapped
     net_worth_rl = getattr(original_env, "net_worth", None)
     return round(net_worth_rl, 2)
-
 
 if __name__ == "__main__":
 
@@ -122,7 +122,9 @@ if __name__ == "__main__":
     env = gym.make("SP500TradingEnv-v0", df=df, render_mode="human")
 
     # Initialise the environment
+
     check_custom_env(env.unwrapped)
+
 
     # Test the environment
     obs, info = env.reset()
@@ -130,6 +132,7 @@ if __name__ == "__main__":
 
     # Perform a baseline investment strategy based on dca
     net_worth_dca = dca_approach(df)
+
     logging.info(
         f"Net worth after Dollar " f"Cost Average (DCA): {net_worth_dca}"
     )
@@ -137,3 +140,4 @@ if __name__ == "__main__":
     # Perform a RL investment strategy based PPO
     net_worth_rl = rl_approach(df)
     logging.info(f"Net worth after RL strategy: {net_worth_rl}")
+
