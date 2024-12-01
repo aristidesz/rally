@@ -7,6 +7,8 @@ import pandas as pd
 import yaml
 from gymnasium.utils.env_checker import check_env
 from stable_baselines3 import PPO
+from stable_baselines3.common.evaluation import evaluate_policy
+from stable_baselines3.common.logger import configure
 
 from src import rl_env
 
@@ -82,6 +84,16 @@ def dca_approach(
     return round(net_worth_dca, 2)
 
 
+def rl_evaluation(model):
+    """
+    Evaluates gymnasium model
+    """
+    mean_reward, std_reward = evaluate_policy(
+        model.policy, model.get_env(), n_eval_episodes=10
+    )
+    return mean_reward, std_reward
+
+
 def rl_approach(df: pd.DataFrame, initial_balance: float = 10000):
     env = gym.make(
         "SP500TradingEnv-v0",
@@ -94,10 +106,16 @@ def rl_approach(df: pd.DataFrame, initial_balance: float = 10000):
     env.render()
     # Instantiate RL model
     model = PPO("MlpPolicy", env, verbose=1)
+    model.set_logger(logger)
 
     logging.info("Training the model...")
 
     model.learn(total_timesteps=10000)
+    mean_reward, std_reward = rl_evaluation(model)
+    print(
+        f"Evaluation mean reward: {mean_reward}"
+        f" and its standard deviation: {std_reward}"
+    )
 
     obs, _ = env.reset()
     for _ in range(df.shape[0]):
@@ -118,6 +136,10 @@ if __name__ == "__main__":
 
     # Ignore import not used
     rl_env.SP500TradingEnv
+
+    # Create a new logger
+    log_dir = "./logs/"
+    logger = configure(log_dir, ["stdout", "tensorboard"])
 
     # Create the environment using gym.make
     env = gym.make("SP500TradingEnv-v0", df=df, render_mode="human")
