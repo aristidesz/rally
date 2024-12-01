@@ -1,4 +1,6 @@
 # from src.rl_env import SP500TradingEnv
+import logging
+
 import gymnasium as gym
 import numpy as np
 import pandas as pd
@@ -7,6 +9,13 @@ from gymnasium.utils.env_checker import check_env
 from stable_baselines3 import PPO
 
 from src import rl_env
+
+# Basic configuration
+logging.basicConfig(
+    level=logging.INFO,  # Log messages of INFO level and higher
+    format="%(asctime)s - %(levelname)s - %(message)s",  # Log format
+    handlers=[logging.StreamHandler()],  # Output to console by default
+)
 
 
 def load_config(name="config.yaml"):
@@ -86,7 +95,8 @@ def rl_approach(df: pd.DataFrame, initial_balance: float = 10000):
     # Instantiate RL model
     model = PPO("MlpPolicy", env, verbose=1)
 
-    print("Training the model...")
+    logging.info("Training the model...")
+
     model.learn(total_timesteps=10000)
 
     obs, _ = env.reset()
@@ -94,13 +104,10 @@ def rl_approach(df: pd.DataFrame, initial_balance: float = 10000):
         action, _states = model.predict(obs, deterministic=True)
         obs, reward, done, _, _ = env.step(action)
 
-        if done:
-            break
-
     # Access the original SP500TradingEnv (unwrapped version)
     original_env = env.unwrapped
-    net_worth_dca = getattr(original_env, "net_worth", None)
-    return round(net_worth_dca, 2)
+    net_worth_rl = getattr(original_env, "net_worth", None)
+    return round(net_worth_rl, 2)
 
 
 if __name__ == "__main__":
@@ -116,7 +123,8 @@ if __name__ == "__main__":
     env = gym.make("SP500TradingEnv-v0", df=df, render_mode="human")
 
     # Initialise the environment
-    check_custom_env(env)
+
+    check_custom_env(env.unwrapped)
 
     # Test the environment
     obs, info = env.reset()
@@ -124,8 +132,11 @@ if __name__ == "__main__":
 
     # Perform a baseline investment strategy based on dca
     net_worth_dca = dca_approach(df)
-    print(f"Net worth after Dollar " f"Cost Average (DCA): {net_worth_dca}")
+
+    logging.info(
+        f"Net worth after Dollar " f"Cost Average (DCA): {net_worth_dca}"
+    )
 
     # Perform a RL investment strategy based PPO
     net_worth_rl = rl_approach(df)
-    print(f"Net worth after RL strategy: {net_worth_rl}")
+    logging.info(f"Net worth after RL strategy: {net_worth_rl}")
