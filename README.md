@@ -26,3 +26,52 @@ This project is intended as an exercise/experiment and not a production-ready sy
 
 
 Nevertheless, this environment provides a safe and controlled context for learning about RL and testing investment strategies.
+
+## Installation
+
+Follow these steps to set up the project dependencies:
+
+1. **Install Poetry**  
+
+If you do not have Poetry installed, you can install it using the following command:
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+2. **Install Project Dependencies**
+
+Run the following commands to install the dependencies:
+   ```bash
+   poetry install
+   poetry run pip install -r pip-requirements.txt
+   ```
+
+## Running the strategies
+
+To execute the strategies, follow these steps:
+
+1. **Ensure the Virtual Environment is Activated**
+
+Poetry will manage a virtual environment for you. Ensure you're using the Poetry environment by running:
+
+
+
+```bash
+poetry shell
+```
+
+2. **Set the PYTHONPATH Environment Variable**
+The project relies on the PYTHONPATH being set to the workspace folder. Use the following command:
+
+
+```bash
+export PYTHONPATH=$(pwd)
+```
+
+3. **Run the Script**
+
+Execute the script by running:
+
+```bash
+poetry run python pipeline/main.py
+```
