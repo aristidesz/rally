@@ -24,7 +24,6 @@ This project is intended as an exercise/experiment and not a production-ready sy
 - Trading strategies developed here often fail to achieve consistently better results than DCA.
 - Real-world markets are highly complex and may not be adequately modeled by simplified environments like this one.
 
-
 Nevertheless, this environment provides a safe and controlled context for learning about RL and testing investment strategies.
 
 ## Installation
